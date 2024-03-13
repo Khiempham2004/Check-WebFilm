@@ -1,0 +1,45 @@
+.body {
+    border: 2px solid yellowgreen;
+    border-width: 150px;
+    height: 600px;
+}
+
+h1 {
+    margin-left: 550px;
+}
+p{
+    font-size: 25px;
+    margin-left: 35px;
+}
+h2 {
+    margin-left: 30px;
+}
+
+b {
+    color: white;
+    border-radius: 100px;
+    border: 3px solid red;
+    background-color: red;
+}
+
+input {
+    margin-left: 1150px;
+}
+
+.anhMovie {
+    display: flex;
+}
+
+.room {
+    margin-left: 35px;
+    width: 260px;
+    height: 280px;
+    border-radius: 10px;
+}
+h3{
+    margin-left: 35px;
+    font-family:'Courier New', Courier, monospace;
+}
+button {
+    margin-top: 300px;
+}

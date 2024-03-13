@@ -1,24 +1,41 @@
 import logo from './logo.svg';
 import './App.css';
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { useState } from 'react';
+import Navbar from './Component/Navbar/Navbar.js';
+import MovieComponent from './Component/MovieComponent/Movie.js';
+import WhipLaseComponent from './Component/MovieComponent/WhipLash.js';
+import MadmaxComponent from './Component/MovieComponent/MadMax.js';
+import ReventComponent from './Component/MovieComponent/ReVentAnt.js';
 
 function App() {
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path='/' element={<>
+          <Navbar />
+        </>} />
+        <Route path='/brie-larson' element={
+          <>
+            <MovieComponent />
+          </>}
+        />
+        <Route path='/WHISLAPE' element={<>
+          <WhipLaseComponent />
+        </>} />
+        <Route path='/MadMax' element={<>
+          <MadmaxComponent />
+        </>}
+        />
+        <Route path='/The REVENANT' element={
+          <>
+            <ReventComponent />
+          </>
+        } />
+      </Routes>
+    </BrowserRouter>
+
   );
 }
 
