@@ -10,9 +10,27 @@ import userModel from './model/users.model.js';
 import imageModel from './model/image.model.js';
 
 
-const app = express();
 dotenv.config();
+const app = express();
 const Port = process.env.PORT || 3001;
+
+const diskStorages = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, './uploads')
+    },
+    filename: function (req, file, cb) {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
+        cb(null, file.fieldname + '-' + uniqueSuffix + ".png")
+    }
+})
+const uploads = multer({ storage: diskStorages });
+
+
+cloudinary.config({
+    cloud_name: process.env.CLOUD_NAME,
+    api_key: process.env.CLOUD_KEY,
+    api_secret: process.env.CLOUD_SECRET,
+});
 
 app.use(express.json())
 app.use(morgan("combined"))
@@ -20,7 +38,7 @@ app.use(morgan("combined"))
 app.post("/login", async (req, res) => {
     try {
         const { email, password } = req.body;
-
+        console.log(req.body);
         if (!email || !password) throw new Error("email or password is required")
         const handlePassword = await bcrypt.hash(email, password)
 
@@ -57,6 +75,7 @@ app.post("/logout", async (req, res) => {
         res.status(500).send("logout successfully! ")
     }
 })
+
 // Them , sua , xoa du lieu phim
 app.post("/movie", async (req, res) => {
     try {
@@ -158,27 +177,7 @@ app.post("/movies", async (req, res) => {
 
 
 // Upload hinh anh len he thong 
-cloudinary.config({
-    cloud_name: process.env.CLOUD_NAME,
-    api_key: process.env.CLOUD_KEY,
-    api_secret: process.env.CLOUD_SECRET,
-});
-
-const upload = multer({
-    dest: './uploads', // Specify a dedicated upload directory
-    limits: { fileSize: 5000000 }, // Set a maximum file size limit (5MB)
-    fileFilter: (req, file, cb) => {
-        const allowedExtensions = ['.jpg', '.jpeg', '.png', '.gif'];
-        const extname = path.extname(file.originalname);
-        if (!allowedExtensions.includes(extname)) {
-            cb(new Error('Invalid file type. Only JPEG, PNG, and GIF files are allowed.'));
-            return;
-        }
-        cb(null, true); // Accept the file
-    }
-});
-
-app.post("/image", upload.array("files"), async (req, res) => {
+app.post("/image", uploads.array("files"), async (req, res) => {
     try {
         const files = req.files;
         if (!files || files.length === 0) {
@@ -197,16 +196,16 @@ app.post("/image", upload.array("files"), async (req, res) => {
     }
 })
 
-app.post("/image", upload.array("files"), async (req, res) => {
+app.post("/upload", uploads.array("file"), async (req, res) => {
     try {
-        const files = req.files;
-        if (!files || files.length === 0) {
+        const file = req.file;
+        if (!file || file.length === 0) {
             return res.status(400).send("không có tệp nào tải lên")
         }
         res.json({
             code: 200,
             message: "đẩy file thành công lên tệp",
-            data: files,
+            data: file,
         })
     } catch (error) {
         res.json({
@@ -216,7 +215,7 @@ app.post("/image", upload.array("files"), async (req, res) => {
     }
 })
 
-app.post("/upload", upload.single("file"), async (req, res) => {
+app.post("/upload", uploads.single("file"), async (req, res) => {
     try {
         const file = req.file;
 
